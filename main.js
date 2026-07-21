@@ -14,12 +14,13 @@ const links = [
     "https://xai-uni-ulm.limesurvey.net/900003?lang=en&newtest=Y"
 ];
 
-// Shared counter endpoint (CountAPI). The namespace/key isolate this study's
-// tally; change them if you re-run the study and want a fresh count.
+// Shared counter endpoint (abacus — a maintained CountAPI-compatible service;
+// returns {"value": N}). The namespace/key isolate this study's tally; change
+// the key if you re-run the study and want a fresh count.
 const COUNTER_NAMESPACE = "plan-explanations-semantic-roles";
 const COUNTER_KEY = "arm-allocation-2026";
 const COUNTER_URL =
-    `https://api.countapi.xyz/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`;
+    `https://abacus.jasoncameron.dev/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`;
 
 // Don't make participants wait on a slow/dead counter.
 const COUNTER_TIMEOUT_MS = 2500;
