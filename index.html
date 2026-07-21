@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Explanations Survey</title>
+    <!-- Never cache this launcher: it must always run the latest allocation logic. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 </head>
 <body>
     <div id="link-container">
         <a id="link" href="#">Welcome to the Plan Explanations Survey</a>
     </div>
-    
-    <script src="main.js"></script>
+
+    <!-- Version query string forces browsers to refetch main.js after each change.
+         Bump ?v=... whenever you edit main.js. -->
+    <script src="main.js?v=2026-07-21b"></script>
 </body>
 </html>
