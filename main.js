@@ -1,24 +1,60 @@
-let currentIndex = Math.floor(Math.random() * 2);
+// ---------------------------------------------------------------------------
+// Balanced (round-robin) allocation across the three study arms.
+//
+// Each visitor increments a shared counter and is sent to arm (count % 3),
+// so the three LimeSurvey orders fill evenly instead of drifting apart the
+// way plain Math.random() does. If the counter service is unreachable we
+// fall back to a random arm so a participant is never left stranded.
+// ---------------------------------------------------------------------------
 
-// Define an array of predetermined links
+// The three study arms (LimeSurvey orders 1/2/3).
 const links = [
-    "https://docs.google.com/forms/d/e/1FAIpQLSc3uQuczP2M0Gu4wOhIgE11Pbn724DS672_-EmA0G1ZsyvHJA/viewform",
-    "https://docs.google.com/forms/d/e/1FAIpQLScF-bqL3cuukz6mCXrOnk82k990B8lai-kWYlY4_hUgoE5Dsg/viewform"
+    "https://xai-uni-ulm.limesurvey.net/900001?lang=en&newtest=Y",
+    "https://xai-uni-ulm.limesurvey.net/900002?lang=en&newtest=Y",
+    "https://xai-uni-ulm.limesurvey.net/900003?lang=en&newtest=Y"
 ];
 
-const linkElement = document.getElementById("link");
+// Shared counter endpoint (CountAPI). The namespace/key isolate this study's
+// tally; change them if you re-run the study and want a fresh count.
+const COUNTER_NAMESPACE = "plan-explanations-semantic-roles";
+const COUNTER_KEY = "arm-allocation-2026";
+const COUNTER_URL =
+    `https://api.countapi.xyz/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`;
 
-document.addEventListener("DOMContentLoaded", function() {
+// Don't make participants wait on a slow/dead counter.
+const COUNTER_TIMEOUT_MS = 2500;
 
-    function updateLinkAndRedirect() {
-        linkElement.href = links[currentIndex];
+function randomIndex() {
+    return Math.floor(Math.random() * links.length);
+}
 
-        // Automatically redirect to the updated link
-        window.location.href = linkElement.href;
-        
-        //currentIndex = (currentIndex + 1) % links.length; // Cycle through the links
+async function chooseArmIndex() {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), COUNTER_TIMEOUT_MS);
+    try {
+        const res = await fetch(COUNTER_URL, { signal: controller.signal });
+        if (!res.ok) throw new Error(`counter HTTP ${res.status}`);
+        const data = await res.json();
+        // CountAPI returns the *new* value; map it round-robin onto the arms.
+        if (typeof data.value === "number") {
+            return (data.value - 1 + links.length) % links.length;
+        }
+        throw new Error("counter returned no value");
+    } catch (err) {
+        // Service down, blocked, or timed out — degrade gracefully to random.
+        return randomIndex();
+    } finally {
+        clearTimeout(timer);
     }
+}
 
-    updateLinkAndRedirect();
+document.addEventListener("DOMContentLoaded", async function () {
+    const linkElement = document.getElementById("link");
+    const index = await chooseArmIndex();
+    const target = links[index];
+
+    // Set the visible link too, so it works even if the redirect is blocked.
+    if (linkElement) linkElement.href = target;
+
+    window.location.href = target;
 });
-
