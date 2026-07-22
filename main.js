@@ -18,7 +18,7 @@ const links = [
 // returns {"value": N}). The namespace/key isolate this study's tally; change
 // the key if you re-run the study and want a fresh count.
 const COUNTER_NAMESPACE = "plan-explanations-semantic-roles";
-const COUNTER_KEY = "arm-allocation-2026";
+const COUNTER_KEY = "arm-allocation-2025";
 const COUNTER_URL =
     `https://abacus.jasoncameron.dev/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`;
 
