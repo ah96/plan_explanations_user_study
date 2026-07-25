@@ -9,9 +9,9 @@
 
 // The three study arms (LimeSurvey orders 1/2/3).
 const links = [
-    "https://xai-uni-ulm.limesurvey.net/900001?lang=en&newtest=Y",
-    "https://xai-uni-ulm.limesurvey.net/900002?lang=en&newtest=Y",
-    "https://xai-uni-ulm.limesurvey.net/900003?lang=en&newtest=Y"
+    //"https://xai-uni-ulm.limesurvey.net/900001?lang=en&newtest=Y",
+    "https://xai-uni-ulm.limesurvey.net/900002?lang=en&newtest=Y"//,
+    //"https://xai-uni-ulm.limesurvey.net/900003?lang=en&newtest=Y"
 ];
 
 // Shared counter endpoint (abacus — a maintained CountAPI-compatible service;
